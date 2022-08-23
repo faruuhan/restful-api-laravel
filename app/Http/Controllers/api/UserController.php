@@ -16,7 +16,7 @@ class UserController extends Controller
     }
 
     public function update(Request $request){
-
+        
         $user = auth()->user();
 
         $validation = Validator::make($request->all(), [
