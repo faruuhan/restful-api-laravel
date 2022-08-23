@@ -78,4 +78,33 @@ class UserController extends Controller
             'update user successfuly'], 
             200);
     }
+
+    public function distroy(){
+
+        $user = auth()->user();
+
+        auth()->logout();
+
+        $data = User::where('id', $user->id)->delete();
+
+        if($user->img != 'default.jpg'){
+            Storage::delete($user->img);
+        }
+
+        if(!$data){
+            return response()->json([
+                'status' => 400, 
+                'success'=> false, 
+                'message' => 'failed delete data user, try again!'], 
+                400);
+        }
+
+        return response()->json([
+            'status' => 200, 
+            'success'=> true, 
+            'message' => 
+            'delete user successfuly'], 
+            200);
+
+    }
 }

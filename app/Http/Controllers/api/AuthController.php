@@ -31,7 +31,6 @@ class AuthController extends Controller
                 400);
         }
 
-
         $data = User::create([
             'fullName' => $request->fullName,
             'email' => $request->email,

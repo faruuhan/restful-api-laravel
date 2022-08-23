@@ -31,4 +31,5 @@ Route::group([
     'prefix' => 'user'
 ], function ($router) {
     Route::put('/', [UserController::class, 'update']);
+    Route::delete('/', [UserController::class, 'distroy']);
 });
