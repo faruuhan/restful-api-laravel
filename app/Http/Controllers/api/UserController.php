@@ -16,16 +16,28 @@ class UserController extends Controller
     }
 
     public function update(Request $request){
-        
+
         $user = auth()->user();
 
-        $validation = Validator::make($request->all(), [
-            'fullName' => 'required',
-            'email' => 'required|email',
-            'password' => 'required|min:8',
-            'img' => 'required',
-            'status' => 'required'
-        ]);
+
+        if($user->email === $request->email){
+            $validation = Validator::make($request->all(), [
+                'fullName' => 'required',
+                'email' => 'required|email',
+                'password' => 'required|min:8',
+                'img' => 'required',
+                'status' => 'required'
+            ]);
+        }else{
+            $validation = Validator::make($request->all(), [
+                'fullName' => 'required',
+                'email' => 'required|email|unique:users,email',
+                'password' => 'required|min:8',
+                'img' => 'required',
+                'status' => 'required'
+            ]);
+        }
+
 
         if($validation->fails()){
             return response()->json([
