@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
@@ -19,13 +20,12 @@ class UserController extends Controller
 
         $user = auth()->user();
 
-
         if($user->email === $request->email){
             $validation = Validator::make($request->all(), [
                 'fullName' => 'required',
                 'email' => 'required|email',
                 'password' => 'required|min:8',
-                'img' => 'required',
+                'img' => 'mimes:jpg,png,jpeg|image|file|max:1024',
                 'status' => 'required'
             ]);
         }else{
@@ -33,11 +33,19 @@ class UserController extends Controller
                 'fullName' => 'required',
                 'email' => 'required|email|unique:users,email',
                 'password' => 'required|min:8',
-                'img' => 'required',
+                'img' => 'mimes:jpg,png,jpeg|image|file|max:1024',
                 'status' => 'required'
             ]);
         }
 
+        if($request->file('img')) {
+            if($user->img != 'default.jpg'){
+                Storage::delete($user->img);
+            }
+            $path = $request->file('img')->store('profile-img');
+        }else{
+            $path = $user->img;
+        }
 
         if($validation->fails()){
             return response()->json([
@@ -51,7 +59,7 @@ class UserController extends Controller
             'fullName' => $request->fullName,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'img' => $request->img,
+            'img' => $path,
             'status' => $request->status,
         ]);
 
