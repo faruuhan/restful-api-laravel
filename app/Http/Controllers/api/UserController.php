@@ -38,6 +38,14 @@ class UserController extends Controller
             ]);
         }
 
+        if($validation->fails()){
+            return response()->json([
+                'status' => 400, 
+                'success'=> false, 
+                'message' => $validation->errors()], 
+                400);
+        }
+
         if($request->file('img')) {
             if($user->img != 'default.jpg'){
                 Storage::delete($user->img);
@@ -45,14 +53,6 @@ class UserController extends Controller
             $path = $request->file('img')->store('profile-img');
         }else{
             $path = $user->img;
-        }
-
-        if($validation->fails()){
-            return response()->json([
-                'status' => 400, 
-                'success'=> false, 
-                'message' => $validation->errors()], 
-                400);
         }
 
         $data = User::where('id', $user->id)->update([
